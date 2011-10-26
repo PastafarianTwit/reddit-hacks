@@ -18,6 +18,7 @@ import csv
 import redditclient
 import time
 import datetime
+import UnicodeWriter
 
 def parse_args():
     parser = argparse.ArgumentParser(description='backup subreddit flair to CSV')
@@ -31,13 +32,18 @@ def parse_args():
 
 def user_flair_to_csv(path, client, config):
     starttime = time.time()
-    print 'Writing flair to CSV file "{}" at {start}'.format(config.csvfile, start = time.strftime('%I:%M:%S %p') )    
-    c = UnicodeWriter(open(path, 'wb'))
+    print 'Writing flair to CSV file "{f}" at {start}'.format(f = path, start = time.strftime('%I:%M:%S %p') )    
+    c = UnicodeWriter.UnicodeWriter(open(path, 'wb'))
     # write a header
     c.writerow(['user', 'text', 'css'])
     for r in client.flair_list(config.subreddit, config.batch_size):
         # Currently broken right here, due to some Unicode bullshit
-        c.writerow(r)
+        newrow = []
+        for element in r:
+            if element != '':
+                element.encode('utf-8')
+            newrow.append(element)
+        c.writerow(newrow)
     elapsed = time.time() - starttime
     print 'Done! Took {}'.format(datetime.timedelta(seconds=elapsed))
 
