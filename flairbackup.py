@@ -40,8 +40,7 @@ def user_flair_to_csv(path, client, config):
         # Currently broken right here, due to some Unicode bullshit
         newrow = []
         for element in r:
-            if element != '':
-                element.encode('utf-8')
+            element.encode('utf-8')
             newrow.append(element)
         c.writerow(newrow)
     elapsed = time.time() - starttime
