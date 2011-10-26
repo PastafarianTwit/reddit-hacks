@@ -29,15 +29,15 @@ def parse_args():
                         help='number of users to read at a time from the site')
     return parser.parse_args()
 
-
 def user_flair_to_csv(path, client, config):
     starttime = time.time()
     print 'Writing flair to CSV file "{}" at {start}'.format(config.csvfile, start = time.strftime('%I:%M:%S %p') )    
-    c = csv.writer(open(path, 'wb'))
+    c = UnicodeWriter(open(path, 'wb'))
     # write a header
     c.writerow(['user', 'text', 'css'])
     for r in client.flair_list(config.subreddit, config.batch_size):
-        c.writerow()
+        # Currently broken right here, due to some Unicode bullshit
+        c.writerow(r)
     elapsed = time.time() - starttime
     print 'Done! Took {}'.format(datetime.timedelta(seconds=elapsed))
 
